@@ -17,3 +17,32 @@ There is a way to avoid unnecessary reexecutions of child components in React.
 This is by means of the builtin `memo` function
 
 This lets us bypass component reexecution when a component's props are unchanged
+
+This can be used by importing `memo` from React, and then just wrap our component function with the memo function - passing the component function as a callback function to memo. This works best if we store it all as a constant variable, like `const Component = memo(function Component({...}))`
+
+Then export it at the bottom.
+
+When a parent to this memoized component renders, memo takes a look at the memoized children's props. If those props are the same, then those respective children components will not be reexecuted. Memo only prevents component executions that would be triggered by the parent component's execution
+
+It is better to not overuse this as it does cost a bit of performance. Instead, wrap memo around a component that's high up in the component tree - thereby preventing its children from rerendering. Think this through when considering how the state updates in your application.
+
+Another, more classic approach is to just move the state down into a component that needs it so that its siblings don't get rerendered when something it changes triggers a state update in the parent which was previous managing the state.
+
+### Avoiding unnecessary component executions due to "new" function props
+
+Remember that when a function is defined inside of a component function, when that component rerenders, a "new" function is created in memory. Though the contents and appearance of this function is identical to us, it is still different in terms of strict memory equality under the hood.
+
+So, say if a parent component defines a function a child needs, and that child is running memo to prevent unnecessary rerenders, that parent's rerender will make a "new" function in memory - thereby triggering memo to say "Oh hey there's a new prop/a prop changed," and so the child will rerender. The way to avoid this is to wrap that function (in the parent component) in the useCallback builtin React method. It makes it so that the new memory slot isn't created for the "new" function when the parent component rerenders.
+
+Its syntax looks like this:
+
+```
+>>The original function
+  function handleDecrement() {
+    setCounter((prevCounter) => prevCounter - 1);
+  }
+
+ const handleDecrement = useCallback(function handleDecrement() {
+    setCounter((prevCounter) => prevCounter - 1);
+  }, []);
+```

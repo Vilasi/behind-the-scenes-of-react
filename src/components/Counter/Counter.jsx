@@ -1,4 +1,4 @@
-import { useState, memo } from 'react';
+import { useState, memo, useCallback } from 'react';
 
 import IconButton from '../UI/IconButton.jsx';
 import MinusIcon from '../UI/Icons/MinusIcon.jsx';
@@ -29,13 +29,23 @@ const Counter = memo(function Counter({ initialCount }) {
 
   const [counter, setCounter] = useState(initialCount);
 
-  function handleDecrement() {
-    setCounter((prevCounter) => prevCounter - 1);
-  }
+  // const handleDecrement = useCallback(() => {
+  //   setCounter((prevCounter) => prevCounter - 1);
+  // });
 
-  function handleIncrement() {
+  // const handleIncrement = useCallback(() => {
+  //   setCounter((prevCounter) => prevCounter + 1);
+  // });
+
+  // Note that this useCallback method - which stores this function as its own memory, preventing new functions being created in memory
+  //  needs a dependencies array, in which we would put any states or prop that are being used inside the function
+  const handleDecrement = useCallback(function handleDecrement() {
+    setCounter((prevCounter) => prevCounter - 1);
+  }, []);
+
+  const handleIncrement = useCallback(function handleIncrement() {
     setCounter((prevCounter) => prevCounter + 1);
-  }
+  }, []);
 
   return (
     <section className="counter">
