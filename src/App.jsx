@@ -8,17 +8,7 @@ import { log } from './log.js';
 function App() {
   log('<App /> rendered');
 
-  // const [enteredNumber, setEnteredNumber] = useState(0);
   const [chosenCount, setChosenCount] = useState(0);
-
-  // function handleChange(event) {
-  //   setEnteredNumber(+event.target.value);
-  // }
-
-  // function handleSetClick(enteredNumber) {
-  //   setChosenCount(enteredNumber);
-  //   // setEnteredNumber(0);
-  // }
 
   function handleSetCount(newCount) {
     setChosenCount(newCount);
@@ -30,7 +20,7 @@ function App() {
       <main>
         <ConfigureCounter onSet={handleSetCount} />
 
-        <Counter initialCount={chosenCount} />
+        <Counter key={chosenCount} initialCount={chosenCount} />
         <Counter initialCount={chosenCount} />
       </main>
     </>

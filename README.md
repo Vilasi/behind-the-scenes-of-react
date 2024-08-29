@@ -92,3 +92,17 @@ This is why React includes the Key prop - which must be unique to each component
 Hell, most of the time our data will actually be coming from a database, so we can just use those IDs for the key - obviously lol
 
 Another reason using these unique keys is a good idea is regarding that virtualDOM we mentioned earlier. Therein, when we're just using something that changes like an index, the new virtualDOM snapshot will look at the new keys for the whole index list and see that it's changed, thereby updating the entire dynamically generated content to the real DOM. This is inefficient. Giving each of the dynamically generated items their own unique key will ensure that each virtualDOM snapshot matches from render to render - only updating or adding to the real DOM when a new unique value is generated.
+
+### Using keys to reset components
+
+Keys can also be used to reset components. If we have a child component which sets a state based on the value of a prop being passed to it, that state value will only be set on the initial render of the child component. That is, if the parent component then passes a new value to the prop, the state of the child - set initially from that original prop value - will not be automatically updated. The state will still hold the value it was originally set with at the outset. Sometimes, we want the behavior to be such that the state is updated with the updated prop value when it is sent from the parent.
+
+This can be accomplished using the Key.
+
+When a components key changes - any component - this will force a rerender of the component. If you will, it is as though React throws away the old component (with the old key value) and renders a whole new component as though it were updated/set for the first time. This way, we can use the key to force the child component's state to reflect the new prop value.
+
+## State updating, and multiple state updates being batched together
+
+In react, state updates are scheduled. Meaning, when you call a state update in one line, and then try to instantly use that state value in the next line, it won't yet have that updated value. That's why it's necessary to use the state updating callback function method as we've used, which receives as an argument the most up-to-date state snapshot.
+
+An important thing to remember regarding updating the state multiple times within a single component: Though triggering state update does indeed trigger the component to rerender, calling multiple state updating functions will not cause the component to rerender multiple times. Instead, the state updates are batched together, and all run together. That is, despite multiple state updates, even those that update the same state value, the component will still only reexecute once - reflecting the results of all of the state updating functions.
